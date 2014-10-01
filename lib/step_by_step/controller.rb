@@ -1,12 +1,19 @@
 module StepByStep
-  class ApplicationController < ActionController::Base
+  module Controller
+    extend ActiveSupport::Concern
+
+    included do
+      helper_method :rollout?
+      hide_action :rollout?
+
+      hide_action :degrade_feature
+    end
+
     def rollout?(name)
       Rollout.where(name: name).any? do |rollout|
         rollout.match?(current_user)
       end
     end
-    helper_method :rollout?
-    hide_action :rollout?
 
     def degrade_feature(name)
       yield
@@ -16,6 +23,7 @@ module StepByStep
       end
       raise e
     end
-    hide_action :degrade_feature
   end
 end
+
+# ApplicationController.send(:include, StepByStep::Controller)
