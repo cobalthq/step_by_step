@@ -1,5 +1,4 @@
 require "active_record"
-require "pry"
 require "rails"
 require "step_by_step/version"
 require "step_by_step/rollout"
