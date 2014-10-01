@@ -28,9 +28,9 @@ Then migrate your database.
 
 Let's say you have this new commenting feature that you would like to deploy to production, but you only want a subset of your users to be able to see it. Also, you may want to degrade a feature later, or disable it again altogether.
 
-### Rolling out features
+### Rolling Out Features
 
-#### Rolling out to a group of users
+#### Rolling Out To A Group Of Users
 
 You can define groups with any custom logic like this:
 
@@ -48,7 +48,7 @@ Roll out your feature to your group:
 StepByStep::Rollout.activate_group(:comments, :admins)
 ```
 
-#### Rolling out to a fraction of users
+#### Rolling Out To A Fraction Of Users
 
 ```ruby
 StepByStep::Rollout.activate_percentage(:comments, 20)
@@ -63,7 +63,7 @@ CRC32(user.id) % 100 < percentage # pseudocode
 
 So, for 20%, a feature will be rolled out to users with ids 0, 1, 10, 11, 20, 21, etc. These users also remain as the percentage increases.
 
-#### Rolling out to a specific user
+#### Rolling Out To A Specific User
 
 ```ruby
 StepByStep::Rollout.activate_user(:comments, User.first)
@@ -71,7 +71,7 @@ StepByStep::Rollout.activate_user(:comments, User.first)
 
 Now your first user can see the comments feature.
 
-#### Rolling out to everyone
+#### Rolling Out To Everyone
 
 ```ruby
 StepByStep::Rollout.activate(:comments)
@@ -81,11 +81,11 @@ Now everyone can see the comments feature. This is theoretically the same as act
 
 Activating a feature for everyone is common after you have determined that your rollout phase was successful.
 
-### Deactivating features
+### Deactivating Features
 
 You can easily deactivate new features depending on your needs.
 
-#### Deactivating a feature for everyone
+#### Deactivating A Feature For Everyone
 
 ```ruby
 StepByStep::Rollout.deactivate(:comments)
@@ -93,7 +93,7 @@ StepByStep::Rollout.deactivate(:comments)
 
 Nobody can see your new comments feature anymore.
 
-#### Deactivating a group feature
+#### Deactivating A Group Feature
 
 Your admins shouldn't be able to see the comments anymore? Easy:
 
@@ -101,7 +101,7 @@ Your admins shouldn't be able to see the comments anymore? Easy:
 StepByStep::Rollout.deactivate_group(:comments, :admins)
 ```
 
-#### Deactivating a single user feature
+#### Deactivating A Single User Feature
 
 And there this one user who could see the comments. Let's hide them from him again:
 
@@ -109,7 +109,7 @@ And there this one user who could see the comments. Let's hide them from him aga
 StepByStep::Rollout.deactivate_user(:comments, User.first)
 ```
 
-#### Deactivating a feature for a fraction of users
+#### Deactivating A Feature For A Fraction Of Users
 
 Remember those 20% who could see your new feature? Let's get rid of them, too:
 
@@ -117,11 +117,11 @@ Remember those 20% who could see your new feature? Let's get rid of them, too:
 StepByStep::Rollout.deactivate_percentage(:comments)
 ```
 
-### Displaying features
+### Displaying Features
 
 StepByStep comes with a few helper methods, one of which is called `rollout?`. It's available in your controllers as well as in your views. You just pass it the feature name to check if it has been rolled out to your `current_user`.
 
-#### View example
+#### View Example
 
 It's as simple as:
 
@@ -131,7 +131,7 @@ It's as simple as:
 <% end %>
 ```
 
-#### Controller example
+#### Controller Example
 
 Sometimes, you may want to hide a view completely. You can either do this directly in a controller action:
 
@@ -156,14 +156,14 @@ def rollout
 end
 ```
 
-### Degrading a feature
+### Degrading A Feature
 
 Every rollout comes with a `failure_count`. A helper method is added to your application controller that allows you to track exceptions and increments the failure count for your feature. A failure count of 1 or higher disables your feature.
 
 For instance, you could degrade a feature doing the following in your feature controller:
 
 ```ruby
-around_filter :degrade
+around_action :degrade
 
 private
 def degrade
@@ -171,7 +171,7 @@ def degrade
 end
 ```
 
-## Foolish assumptions
+## Foolish Assumptions
 
 - You have a `current_user` method in your application controller that returns the authenticated user or nil if not authenticated (standard behavior, used e.g. by Devise)
 - You are using Rails
