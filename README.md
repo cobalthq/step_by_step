@@ -173,7 +173,7 @@ end
 
 ## Foolish assumptions
 
-- It is assumed that you have a `current_user` method in your application controller that provides the authenticated user or nil if not authenticated (standard behavior, used e.g. by Devise)
+- You have a `current_user` method in your application controller that returns the authenticated user or nil if not authenticated (standard behavior, used e.g. by Devise)
 - You are using Rails
 - Your user model's primary key is `id` (Rails default)
 
