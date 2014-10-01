@@ -1,8 +1,8 @@
 # StepByStep
 
-This gem is largely inspired by the [Railscast on rollouts and degrading](http://railscasts.com/episodes/315-rollout-and-degrade), and also the [Rollout gem](https://github.com/FetLife/rollout) that is covered in aforementioned Railscast. While very comprehensive, it uses a Redis backend, that might not be desirable to everyone. Though there are some alternatives out there, most of them are either outdated or not as comprehensive as the rollout gem itself.
+This gem is largely inspired by the [Railscast on rollouts and degrading](http://railscasts.com/episodes/315-rollout-and-degrade), as well as the [Rollout gem](https://github.com/FetLife/rollout) that is covered in aforementioned Railscast. While very comprehensive, it uses a Redis backend, that might not be desirable to everyone. Though there are some alternatives out there, most of them are either outdated or not as comprehensive as the rollout gem itself.
 
-StepByStep instead uses ActiveRecord as backend and tries to cover as many use cases and features as the original rollout gem. It is easy to use since no additional backend needs to be set up, and adds some helpful methods that shall assist you in rolling out and degrading features reliably.
+StepByStep uses ActiveRecord as backend instead and tries to cover as many use cases and features as the original rollout gem. It is easy to use since no additional backend needs to be set up, and adds some helpful methods that shall assist you in rolling out and degrading features reliably.
 
 ## Installation
 
@@ -26,7 +26,7 @@ Then migrate your database.
 
 ## Usage
 
-Let's say you have this new commenting feature that you would like to deploy to production, but you only want a subset of your users to be able to see it.
+Let's say you have this new commenting feature that you would like to deploy to production, but you only want a subset of your users to be able to see it. Also, you may want to degrade a feature later, or disable it again altogether.
 
 ### Rolling out features
 
@@ -39,6 +39,8 @@ StepByStep::Rollout.define_group :admins do |user|
   user.admin?
 end
 ```
+
+Consider putting this in an initializer, such as `config/initializers/step_by_step.rb`.
 
 Roll out your feature to your group:
 
@@ -53,7 +55,13 @@ StepByStep::Rollout.activate_percentage(:comments, 20)
 end
 ```
 
-Now 20% of your users can see the comments feature.
+Now 20% of your users can see the comments feature. As in the original gem, this is based on the following algorithm:
+
+```
+CRC32(user.id) % 100 < percentage # pseudocode
+```
+
+So, for 20%, a feature will be rolled out to users with ids 0, 1, 10, 11, 20, 21, etc. These users also remain as the percentage increases.
 
 #### Rolling out to a specific user
 
@@ -69,7 +77,9 @@ Now your first user can see the comments feature.
 StepByStep::Rollout.activate(:comments)
 ```
 
-Now everyone can see the comments feature. This is theoretically the same as activating a percentage with value 100.
+Now everyone can see the comments feature. This is theoretically the same as activating a percentage with value 100 or defining a group with a block that always returns true.
+
+Activating a feature for everyone is common after you have determined that your rollout phase was successful.
 
 ### Deactivating features
 
@@ -148,7 +158,7 @@ end
 
 ### Degrading a feature
 
-Every rollout comes with a `failure_count`. A helper method is added to your application controller that allows you to track exceptions and increment the failure count for your feature. A failure count of 1 or higher disables your feature.
+Every rollout comes with a `failure_count`. A helper method is added to your application controller that allows you to track exceptions and increments the failure count for your feature. A failure count of 1 or higher disables your feature.
 
 For instance, you could degrade a feature doing the following in your feature controller:
 
@@ -163,7 +173,9 @@ end
 
 ## Foolish assumptions
 
-It is assumed that you have a `current_user` method in your application controller that provides the authenticated user or nil if not authenticated (standard behavior, used e.g. by Devise).
+- It is assumed that you have a `current_user` method in your application controller that provides the authenticated user or nil if not authenticated (standard behavior, used e.g. by Devise)
+- You are using Rails
+- Your user model's primary key is `id` (Rails default)
 
 ## Dependencies
 
