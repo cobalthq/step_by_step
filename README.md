@@ -26,9 +26,11 @@ Then migrate your database.
 
 ## Usage
 
-Let's say you have this new commenting feature that you would like to deploy to production, but you only want a subset of users to be able to see it.
+Let's say you have this new commenting feature that you would like to deploy to production, but you only want a subset of your users to be able to see it.
 
-### Rolling out to a group of users
+### Rolling out features
+
+#### Rolling out to a group of users
 
 You can define groups with any custom logic like this:
 
@@ -44,57 +46,122 @@ Roll out your feature to your group:
 StepByStep::Rollout.activate_group(:comments, :admins)
 ```
 
-### Rolling out to everyone
+#### Rolling out to a fraction of users
+
+```ruby
+StepByStep::Rollout.activate_percentage(:comments, 20)
+end
+```
+
+Now 20% of your users can see the comments feature.
+
+#### Rolling out to a specific user
+
+```ruby
+StepByStep::Rollout.activate_user(:comments, User.first)
+```
+
+Now your first user can see the comments feature.
+
+#### Rolling out to everyone
 
 ```ruby
 StepByStep::Rollout.activate(:comments)
+```
 
+Now everyone can see the comments feature. This is theoretically the same as activating a percentage with value 100.
 
+### Deactivating features
 
+You can easily deactivate new features depending on your needs.
+
+#### Deactivating a feature for everyone
 
 ```ruby
-# Activates a feature for everyone
-def StepByStep::Rollout.activate(name)
-  create! name: name, group: :all
-end
-
-# Activates a feature for a fraction of users
-def StepByStep::Rollout.activate_percentage(name, percentage)
-  create! name: name, percentage: percentage
-end
-
-# Activates a feature for a specific user
-def StepByStep::Rollout.activate_user(name, user)
-  create! name: name, user_id: user.id
-end
-
-# Deactivates a feature for everyone
-def StepByStep::Rollout.deactivate(name)
-  where(name: name).destroy_all
-end
-
-# Deactivates a feature for a specific group
-def StepByStep::Rollout.deactivate_group(name, group)
-  where(name: name, group: group).destroy_all
-end
-
-# Deactivates a feature for a specific user
-def StepByStep::Rollout.deactivate_user(name, user)
-  where(name: name, user_id: user.id).destroy_all
-end
-
-# Deactivates a feature for a fraction of users
-def StepByStep::Rollout.deactivate_percentage(name)
-  where('name = ? AND percentage IS NOT NULL', name).destroy_all
-end
-
-# Define groups
-def StepByStep::Rollout.define_group(group, &block)
-  @@groups ||= []
-  @@groups << [group.to_sym, ->(user){ yield(user) }]
-end
-
+StepByStep::Rollout.deactivate(:comments)
 ```
+
+Nobody can see your new comments feature anymore.
+
+#### Deactivating a group feature
+
+Your admins shouldn't be able to see the comments anymore? Easy:
+
+```ruby
+StepByStep::Rollout.deactivate_group(:comments, :admins)
+```
+
+#### Deactivating a single user feature
+
+And there this one user who could see the comments. Let's hide them from him again:
+
+```ruby
+StepByStep::Rollout.deactivate_user(:comments, User.first)
+```
+
+#### Deactivating a feature for a fraction of users
+
+Remember those 20% who could see your new feature? Let's get rid of them, too:
+
+```ruby
+StepByStep::Rollout.deactivate_percentage(:comments)
+```
+
+### Displaying features
+
+StepByStep comes with a few helper methods, one of which is called `rollout?`. It's available in your controllers as well as in your views. You just pass it the feature name to check if it has been rolled out to your `current_user`.
+
+#### View example
+
+It's as simple as:
+
+```erb
+<% if rollout?(:comments) %>
+  <%= # your awesome feature here %>
+<% end %>
+```
+
+#### Controller example
+
+Sometimes, you may want to hide a view completely. You can either do this directly in a controller action:
+
+```ruby
+def show
+  unless rollout?(:comments)
+    redirect_to root_path, notice: 'Access denied'
+  end
+end
+```
+
+or preferably using before actions:
+
+before_action :rollout
+
+private
+def rollout
+  unless rollout?(:comments)
+    redirect_to root_path, notice: 'Access denied'
+  end
+end
+
+### Degrading a feature
+
+Every rollout comes with a `failure_count`. A helper method is added to your application controller that allows you to track exceptions and increment the failure count for your feature. A failure count of 1 or higher disables your feature.
+
+For instance, you could degrade a feature doing the following in your feature controller:
+
+```ruby
+around_filter :degrade
+
+private
+def degrade
+  degrade_feature(:comments) { yield }
+end
+```
+
+## Foolish assumptions
+
+It is assumed that you have a `current_user` method in your application controller that provides the authenticated user or nil if not authenticated (standard behavior, used e.g. by Devise).
 
 ## Dependencies
 
