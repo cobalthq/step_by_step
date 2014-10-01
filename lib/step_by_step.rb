@@ -7,5 +7,8 @@ require "step_by_step/controller"
 
 module StepByStep
   class Engine < ::Rails::Engine
+    initializer 'step_by_step.controllers' do |app|
+      ActionController::Base.send :include, StepByStep::Controller
+    end
   end
 end
