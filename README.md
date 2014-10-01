@@ -135,6 +135,7 @@ end
 
 or preferably using before actions:
 
+```ruby
 before_action :rollout
 
 private
@@ -143,6 +144,7 @@ def rollout
     redirect_to root_path, notice: 'Access denied'
   end
 end
+```
 
 ### Degrading a feature
 
