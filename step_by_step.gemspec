@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = StepByStep::VERSION
   spec.authors       = ["Dennis Charles Hackethal"]
   spec.email         = ["dennis.hackethal@gmail.com"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.summary       = %q{Active Record alternative to https://github.com/FetLife/rollout.}
+  spec.description   = %q{Alternative to https://github.com/FetLife/rollout, with an Active Record backend and additional helpers, partially based on Ryan Bates's custom solution in http://railscasts.com/episodes/315-rollout-and-degrade.}
   spec.homepage      = ""
   spec.license       = "MIT"
 
@@ -20,4 +20,8 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "bundler", "~> 1.6"
   spec.add_development_dependency "rake"
+  spec.add_development_dependency "rspec"
+  spec.add_development_dependency "sqlite3"
+  spec.add_development_dependency "pry"
+  spec.add_dependency "rails"
 end
