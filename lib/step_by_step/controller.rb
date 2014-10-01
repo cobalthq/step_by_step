@@ -25,5 +25,3 @@ module StepByStep
     end
   end
 end
-
-# ApplicationController.send(:include, StepByStep::Controller)
