@@ -1,3 +1,3 @@
-class ApplicationController < ActionController::Base
+class StepByStep::ApplicationController < ::ApplicationController
   include StepByStep::Controller
 end
