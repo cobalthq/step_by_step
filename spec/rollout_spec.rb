@@ -22,6 +22,11 @@ module StepByStep
       end
     end
 
+    it 'rolls out to the public' do
+      rollout = Rollout.activate(:feature)
+      expect(rollout.match?(user_3)).to be_truthy
+    end
+
     it 'rolls out to all' do
       rollout = Rollout.activate(:feature)
       expect(rollout.match?(user_1)).to be_truthy
