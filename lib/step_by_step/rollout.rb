@@ -1,7 +1,11 @@
 module StepByStep
   class Rollout < ActiveRecord::Base
     def match?(user)
-      user && enabled? && (match_group?(user) || match_user?(user) || match_percentage?(user))
+      public? || user && enabled? && (match_group?(user) || match_user?(user) || match_percentage?(user))
+    end
+
+    def public?
+      group == 'all'
     end
 
     # Activates a feature for everyone
