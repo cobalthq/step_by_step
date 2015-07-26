@@ -77,7 +77,7 @@ Now your first user can see the comments feature.
 StepByStep::Rollout.activate(:comments)
 ```
 
-Now everyone can see the comments feature. This is theoretically the same as activating a percentage with value 100 or defining a group with a block that always returns true.
+Now everyone can see the comments feature. This also includes users who are not authenticated. If you want to roll out a feature to all authenticated users, but not to the public, roll it out to a percentage of 100 instead.
 
 Activating a feature for everyone is common after you have determined that your rollout phase was successful.
 
