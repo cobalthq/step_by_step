@@ -45,6 +45,12 @@ module StepByStep
       expect(rollout.match?(user_2)).to be_falsey
     end
 
+    it 'rolls out to a user while group is empty string instead of `nil`' do
+      rollout = Rollout.create(user_id: user_1.id, group: '')
+      expect(rollout.match?(user_1)).to be_truthy
+      expect(rollout.match?(user_2)).to be_falsey
+    end
+
     it 'rolls out to a percentage' do
       rollout = Rollout.activate_percentage(:feature, 50)
 
