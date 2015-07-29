@@ -68,14 +68,16 @@ module StepByStep
         # Find the group whose block should be evaluated based on its name
         g = @@groups.select { |i| i.first.to_sym == group.to_sym }
 
-        # There could theoretically be multiple groups with the same name;
-        # only take the last one
-        g = g.last
+        if g.present?
+          # There could theoretically be multiple groups with the same name;
+          # only take the last one
+          g = g.last
 
-        # g is now an array that looks like this:
-        # [:group_name, code_block]
-        # Call the code block here with the user
-        g.last.call(user)
+          # g is now an array that looks like this:
+          # [:group_name, code_block]
+          # Call the code block here with the user
+          g.last.call(user)
+        end
       end
     end
 
