@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["dennis.hackethal@gmail.com"]
   spec.summary       = %q{Active Record alternative to https://github.com/FetLife/rollout.}
   spec.description   = %q{Alternative to https://github.com/FetLife/rollout, with an Active Record backend and additional helpers, partially based on Ryan Bates's custom solution in http://railscasts.com/episodes/315-rollout-and-degrade.}
-  spec.homepage      = ""
+  spec.homepage      = "https://github.com/cobalthq/step_by_step"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
