@@ -8,6 +8,6 @@ ActiveRecord::Schema.define do
     t.integer :percentage
     t.integer :failure_count
 
-    t.timestamps
+    t.timestamps null: false
   end
 end

@@ -4,9 +4,9 @@ module StepByStep
 
     included do
       helper_method :rollout?
-      hide_action :rollout?
-
-      hide_action :degrade_feature
+      private_class_method :rollout?
+      
+      private_class_method :degrade_feature
     end
 
     def rollout?(name)
